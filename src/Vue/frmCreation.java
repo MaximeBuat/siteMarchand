@@ -5,6 +5,11 @@
  */
 package Vue;
 
+import Tools.BddAccess;
+import Tools.FonctionsMetier;
+import javax.swing.JOptionPane;
+import Entity.Login;
+
 /**
  *
  * @author maxim
@@ -17,6 +22,9 @@ public class frmCreation extends javax.swing.JFrame {
     public frmCreation() {
         initComponents();
     }
+    
+    FonctionsMetier fm;
+    BddAccess cnx;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,7 +47,6 @@ public class frmCreation extends javax.swing.JFrame {
         btnRetour = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(480, 800));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(141, 215, 207));
@@ -51,11 +58,6 @@ public class frmCreation extends javax.swing.JFrame {
         jLabel2.setText("Login");
 
         txtLogin.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        txtLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtLoginActionPerformed(evt);
-            }
-        });
 
         jLabel3.setFont(new java.awt.Font("Arial", 0, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -73,11 +75,21 @@ public class frmCreation extends javax.swing.JFrame {
         btnCreer.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnCreer.setForeground(new java.awt.Color(141, 215, 207));
         btnCreer.setText("Créer");
+        btnCreer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCreerMouseClicked(evt);
+            }
+        });
 
         btnRetour.setBackground(new java.awt.Color(255, 255, 255));
         btnRetour.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnRetour.setForeground(new java.awt.Color(141, 215, 207));
         btnRetour.setText("Retour");
+        btnRetour.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRetourMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -92,12 +104,12 @@ public class frmCreation extends javax.swing.JFrame {
                         .addGap(122, 122, 122)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel2)
-                                .addComponent(txtLogin)
-                                .addComponent(jLabel3)
-                                .addComponent(txtMdp, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
-                            .addComponent(txtConfirmer))))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(txtConfirmer)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(txtLogin, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtMdp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)))))
                 .addContainerGap(120, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
@@ -145,9 +157,46 @@ public class frmCreation extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLoginActionPerformed
+    private void btnRetourMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRetourMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtLoginActionPerformed
+        frmConnexion frm = new frmConnexion();
+        frm.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnRetourMouseClicked
+
+    private void btnCreerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCreerMouseClicked
+        // TODO add your handling code here:
+        
+        cnx = new BddAccess();
+        fm = new FonctionsMetier();
+        Login lesLogin = fm.VerifierLogin(txtLogin.getText());
+        if(txtLogin.getText().compareTo("") == 0){
+            JOptionPane.showMessageDialog(this, "Veuillez écrire un login"," Informations manquante ",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else if(lesLogin != null){
+            JOptionPane.showMessageDialog(this, "Login déjà existant, veuillez en chosir un autre"," Informations manquante ",JOptionPane.WARNING_MESSAGE);
+        }
+        else if(txtMdp.getText().compareTo("") == 0){
+            JOptionPane.showMessageDialog(this, "Veuillez écrire un mot de passe"," Informations manquante ",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else if(txtConfirmer.getText().compareTo("") == 0){
+            JOptionPane.showMessageDialog(this, "Veuillez confirmer votre mot de passe"," Informations manquante ",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+            
+            
+            if(txtMdp.getText().compareTo(txtConfirmer.getText()) == 0){
+                
+                Login unUser = fm.addLogin(txtLogin.getText(), txtMdp.getText());
+                JOptionPane.showMessageDialog(this, "Compte créé avec succès"," Compte créé ",JOptionPane.INFORMATION_MESSAGE);
+                frmConnexion frm = new frmConnexion();
+                frm.setVisible(true);
+                dispose();
+            }else{
+                JOptionPane.showMessageDialog(this, "Le mot de passe et la confirmation du mot de passe ne correspondent pas","Confirmation incorrecte",JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnCreerMouseClicked
 
     /**
      * @param args the command line arguments

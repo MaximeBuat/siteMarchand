@@ -5,6 +5,11 @@
  */
 package Vue;
 
+import Tools.BddAccess;
+import Tools.FonctionsMetier;
+import javax.swing.JOptionPane;
+import Entity.Login;
+
 /**
  *
  * @author maxim
@@ -17,6 +22,9 @@ public class frmConnexion extends javax.swing.JFrame {
     public frmConnexion() {
         initComponents();
     }
+    
+    FonctionsMetier fm;
+    BddAccess cnx;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -58,11 +66,21 @@ public class frmConnexion extends javax.swing.JFrame {
         btnConnexion.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnConnexion.setForeground(new java.awt.Color(141, 215, 207));
         btnConnexion.setText("Connexion");
+        btnConnexion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnConnexionMouseClicked(evt);
+            }
+        });
 
         btnCreation.setBackground(new java.awt.Color(255, 255, 255));
         btnCreation.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnCreation.setForeground(new java.awt.Color(141, 215, 207));
         btnCreation.setText("Création de compte");
+        btnCreation.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCreationMouseClicked(evt);
+            }
+        });
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/user (Personnalisé).png"))); // NOI18N
 
@@ -125,6 +143,37 @@ public class frmConnexion extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCreationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCreationMouseClicked
+        // TODO add your handling code here:
+        frmCreation frm = new frmCreation();
+        frm.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnCreationMouseClicked
+
+    private void btnConnexionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConnexionMouseClicked
+        // TODO add your handling code here:
+        if(txtLogin.getText().compareTo("") == 0){
+            JOptionPane.showMessageDialog(this, "Saisir votre login"," Informations manquante ",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else if(txtMdp.getText().compareTo("") == 0){
+            JOptionPane.showMessageDialog(this, "Saisir votre mot de passe"," Informations manquante ",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+            cnx = new BddAccess();
+            fm = new FonctionsMetier();
+            
+            Login unUser = fm.VerifierIdentifiants(txtLogin.getText(), txtMdp.getText());
+            
+            if(unUser != null){
+                frmAchat frm = new frmAchat();
+                frm.setVisible(true);
+                dispose();
+            }else{
+                JOptionPane.showMessageDialog(this, "Indentifiants incorrectes. Veuillez vérifier les informations renseignées.","Indentifiants incorrectes",JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnConnexionMouseClicked
 
     /**
      * @param args the command line arguments
